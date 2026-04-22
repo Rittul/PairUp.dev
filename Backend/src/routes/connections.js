@@ -2,12 +2,35 @@ const express=require("express");
 const connectionRouter=express.Router();
 const userauth=require("../middlewares/auth");
 const connection=require("../models/connections");
+const mongoose=require("mongoose");
+
 
 connectionRouter.post("/connection/:status/:touserId",userauth,async(req,res)=>{
     try{
-        const fromuserId=req.user;
+        const currentUserId = req.user?.id || req.user?._id || req.user;
+        const fromuserId=currentUserId;
         const touserId=req.params.touserId;
         const status=req.params.status;
+        const ALLOWED_STATUSES = ["interested", "ignored", "accepted", "rejected"];
+    
+        if (!ALLOWED_STATUSES.includes(status)) {
+            return res.status(400).json({ message: "Invalid status" });
+        }
+        if (!mongoose.Types.ObjectId.isValid(touserId)) {
+            return res.status(400).json({ message: "Invalid userId" });
+        }
+
+        if (["accepted", "rejected"].includes(status)) {
+            if (String(currentUserId) !== String(touserId)) {
+                return res.status(403).json({ message: "Only recipient can update this status" });
+            }
+
+            const otherUserId = req.body?.fromuserId || req.query?.fromuserId;
+            if (!otherUserId || !mongoose.Types.ObjectId.isValid(otherUserId)) {
+                return res.status(403).json({ message: "Recipient validation failed" });
+            }
+        }
+
         const conn=await connection.findOne({
             $or:[
                 {fromuserId,touserId},
@@ -28,9 +51,9 @@ connectionRouter.post("/connection/:status/:touserId",userauth,async(req,res)=>{
             return res.json({saved});
         }
     }catch(err){
-        res.send(err.message);
-    }
-})
+        console.error(err);
+        res.status(500).json({ message: "Internal server error" });
+    }})
 
 connectionRouter.get("/getfriends",userauth,async(req,res)=>{
     try{
@@ -43,7 +66,7 @@ connectionRouter.get("/getfriends",userauth,async(req,res)=>{
                 ]},
                 {status:"accepted"},
             ]
-        }).populate("touserId", "username");
+        }).populate("touserId", "username").populate("fromuserId", "username");
         res.json({friends});
     }catch(err){
         res.send(err.message);
@@ -54,6 +77,9 @@ connectionRouter.delete("/deletefriend/:friendId",userauth,async(req,res)=>{
     try{
         const userid=req.user;
         const friendId=req.params.friendId;
+        if (!mongoose.Types.ObjectId.isValid(friendId)) {
+            return res.status(400).json({ message: "Invalid userId" });
+        }
         const deleted=await connection.findOneAndDelete({
             $or:[
                 {touserId:userid, fromuserId:friendId},
@@ -70,5 +96,22 @@ connectionRouter.delete("/deletefriend/:friendId",userauth,async(req,res)=>{
     }
 })
 
+
+connectionRouter.get("/getpendingrequests",userauth,async(req,res)=>{
+    try{
+        const userid=req.user;
+       const pendingrequests = await connection.find({
+            touserId: userid,
+            status: "interested"
+        }).populate("fromuserId", "username");
+        if(pendingrequests.length === 0){
+            return res.json({ message: "No request pending", pendingrequests: [] });
+        }
+        res.json({pendingrequests});
+    }catch(err){
+        console.log(err);
+        res.status(500).send("oops!....internal server error");
+    }
+})
 
 module.exports=connectionRouter;
