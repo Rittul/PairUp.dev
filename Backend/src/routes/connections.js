@@ -26,9 +26,10 @@ connectionRouter.post("/connection/:status/:touserId",userauth,async(req,res)=>{
             }
 
             const otherUserId = req.body?.fromuserId || req.query?.fromuserId;
+            const otherUserId = req.body?.fromuserId || req.query?.fromuserId;
             if (!otherUserId || !mongoose.Types.ObjectId.isValid(otherUserId)) {
-                return res.status(403).json({ message: "Recipient validation failed" });
-            }
+                return res.status(400).json({ message: "Valid fromuserId is required" });
+            }            
         }
 
         const conn=await connection.findOne({
@@ -107,11 +108,10 @@ connectionRouter.get("/getpendingrequests",userauth,async(req,res)=>{
         if(pendingrequests.length === 0){
             return res.json({ message: "No request pending", pendingrequests: [] });
         }
-        res.json({pendingrequests});
     }catch(err){
-        console.log(err);
-        res.status(500).send("oops!....internal server error");
-    }
+        console.error(err);
+        res.status(500).json({ message: "Internal server error" });
+    }    
 })
 
 module.exports=connectionRouter;
