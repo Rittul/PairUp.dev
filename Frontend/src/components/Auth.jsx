@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "../utils/constant";
-import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import "../CSS/Auth.css";
 const Auth = () => {
@@ -14,7 +13,7 @@ const Auth = () => {
 
   const handlelogin = async () => {
     try {
-      const res = await axios.post(BASE_URL + "login", { emailId, password });
+      const res = await axios.post(BASE_URL + "login", { emailId, password },{withCredentials:true});
       if (res.data?.token) {
         localStorage.setItem("token", res.data.token);
       }
@@ -42,7 +41,7 @@ const Auth = () => {
   };
 
   return (
-    <>
+    <div className="auth-page">
       {flag ? (
         <div className="auth_main">
           <h3>Email id:</h3>
@@ -58,13 +57,14 @@ const Auth = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
           <button onClick={handlelogin}>Login</button>
-          {error && <p style={{ color: "red" }}>{error}</p>}
+          {error && <p className="auth_error">{error}</p>}
           <p
+            className="auth_toggle"
             onClick={() => {
               setFlag(!flag);
             }}
           >
-            New user? Create an account
+            New user? <span>Create an account</span>
           </p>
         </div>
       ) : (
@@ -88,17 +88,18 @@ const Auth = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
           <button onClick={handlesignup}>Sign up</button>
-          {error && <p style={{ color: "red" }}>{error}</p>}
+          {error && <p className="auth_error">{error}</p>}
           <p
+            className="auth_toggle"
             onClick={() => {
               setFlag(!flag);
             }}
           >
-            Alreday have an account?
+            Already have an account? <span>Log in</span>
           </p>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

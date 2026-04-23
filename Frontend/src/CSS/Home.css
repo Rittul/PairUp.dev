@@ -1,0 +1,105 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body */
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #ece9e6, #ffffff);
+  height: 100vh;
+}
+
+/* Center container */
+.feed-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+}
+
+/* Card */
+.fc {
+  width: 320px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  padding: 20px;
+  position: relative;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+/* Image */
+.fc img {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  border-radius: 15px;
+  margin-bottom: 15px;
+}
+
+/* Text */
+.fc p {
+  margin: 6px 0;
+  font-size: 15px;
+  color: #333;
+}
+
+.fc p:nth-child(2) {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Buttons container */
+.fc button {
+  padding: 10px 16px;
+  margin: 12px 8px 0;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+/* Interested button */
+.ac {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.ac:hover {
+  background-color: #43a047;
+  transform: scale(1.05);
+}
+
+/* Ignore button */
+.dc {
+  background-color: #f44336;
+  color: white;
+}
+
+.dc:hover {
+  background-color: #e53935;
+  transform: scale(1.05);
+}
+
+/* Swipe right animation */
+.swipe-right {
+  transform: translateX(450px) rotate(25deg);
+  opacity: 0;
+}
+
+/* Swipe left animation */
+.swipe-left {
+  transform: translateX(-450px) rotate(-25deg);
+  opacity: 0;
+}
+
+/* No users message */
+.feed-card p {
+  font-size: 18px;
+  color: #555;
+}

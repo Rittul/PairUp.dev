@@ -28,7 +28,7 @@ const UserSchema= new mongoose.Schema({
     },
     about:{
         type:String,
-        maxLength:200,
+        maxLength:2000,
         default:"This is default of user",
     },
     skills:{
@@ -50,7 +50,7 @@ const UserSchema= new mongoose.Schema({
         type:String,
         trim:true,
         validate:[validator.isURL,"Enter a valid photo URL"],
-        default:"https://as1.ftcdn.net/v2/jpg/07/55/27/62/1000_F_755276205_T74uLkyAD3X0JklaXluVdlxAfkhPbVqS.jpg"
+        default:"https://i.pinimg.com/280x280_RS/cf/ae/0e/cfae0e4f2dba0629d6c46aff2426f481.jpg",
     },
 },{timestamps:true});
 

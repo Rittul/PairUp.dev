@@ -1,0 +1,150 @@
+/* ============================================
+   PairUp.dev — Global Design System
+   Single source of truth for variables, reset,
+   typography, ambient effects & scrollbar
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;700;800&display=swap');
+
+/* ---- Design Tokens ---- */
+:root {
+  /* Backgrounds */
+  --bg-deep:        #0a0a0f;
+  --bg-card:        #111118;
+  --bg-card-alt:    #16161f;
+  --bg-elevated:    #1a1a26;
+
+  /* Neon Accents */
+  --neon-pink:      #ff2d6b;
+  --neon-pink-dim:  #ff2d6b55;
+  --neon-cyan:      #00e5ff;
+  --neon-cyan-dim:  #00e5ff33;
+  --accent-purple:  #7c3aed;
+  --accent-purple-dim: #7c3aed33;
+  --accent-gold:    #ffd700;
+  --accent-gold-dim:#ffd70033;
+
+  /* Text */
+  --text-primary:   #f0f0f8;
+  --text-secondary: #c0c0d8;
+  --text-muted:     #6b6b82;
+  --text-label:     #9090aa;
+
+  /* Borders & Inputs */
+  --border:         #2a2a3a;
+  --border-hover:   #3a3a50;
+  --input-bg:       #0e0e16;
+
+  /* Status */
+  --error-color:    #ff4d6d;
+  --success-color:  #00e5a0;
+
+  /* Radii */
+  --radius-card:    20px;
+  --radius-input:   12px;
+  --radius-btn:     12px;
+  --radius-sm:      10px;
+
+  /* Shadows */
+  --shadow-glow:    0 0 40px #ff2d6b18, 0 0 80px #7c3aed14;
+  --shadow-input:   0 0 0 2px var(--neon-pink-dim);
+  --shadow-card:    0 24px 64px #00000060;
+
+  /* Motion */
+  --transition:     0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---- Global Reset ---- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--bg-deep);
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  position: relative;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* ---- Ambient Background Grid ---- */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 20%, #ff2d6b12 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 80%, #7c3aed10 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 50% 50%, #00e5ff08 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.25;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--neon-pink), var(--accent-purple));
+  border-radius: 999px;
+}
+
+/* ---- Link Reset ---- */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ---- Selection ---- */
+::selection {
+  background: var(--neon-pink);
+  color: #fff;
+}
+
+/* ---- Shared Animations ---- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0%   { left: -100%; }
+  100% { left: 100%; }
+}
+
+@keyframes spinRing {
+  to { transform: rotate(360deg); }
+}

@@ -4,7 +4,7 @@ const userauth=(req,res,next)=>{
     try{
         const token =req.cookies.token;
         if(!token){
-            res.status(400).send("no token found! pls login first");
+            return res.status(400).send("no token found! pls login first");
         }
         const decoded=jwt.verify(token,process.env.JWT_SECRET);
         req.user=decoded.userId;
