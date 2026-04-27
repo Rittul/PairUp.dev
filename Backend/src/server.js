@@ -4,6 +4,12 @@ const dotenv=require("dotenv");
 const connectdb = require("./config/database")
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const http =require("http")
+const server = http.createServer(app);
+const initializesocket = require("./utils/socket");
+initializesocket(server);
+
+
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors({
@@ -17,13 +23,14 @@ const authRouter= require("./routes/auth");
 const profileRouter=require("./routes/profile");
 const connectionRouter=require("./routes/connections");
 
+
 app.use("/",authRouter);
 app.use("/",profileRouter);
 app.use("/",connectionRouter);
 
 
 connectdb().then(()=>{
-    app.listen(3000,(req,res)=>{
+    server.listen(3000,(req,res)=>{
         console.log("Server listening no port 3000 successfully...!");
     })
 })

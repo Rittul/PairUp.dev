@@ -4,6 +4,7 @@ import Home from './components/Home'
 import ProtectedRoute from './components/ProtectedRoute'
 import Profile from './components/Profile'
 import Updateprofile from './components/Updateprofile'
+import Chat from './components/Chat'
 
 function App() {
 
@@ -31,6 +32,14 @@ function App() {
         element={
           <ProtectedRoute>
             <Updateprofile />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/chat/:targetuserid"
+        element={
+          <ProtectedRoute>
+            <Chat />
           </ProtectedRoute>
         }
       />
