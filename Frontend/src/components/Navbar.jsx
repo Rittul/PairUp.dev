@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../utils/constant";
 import "../CSS/Navbar.css";
+import Chat from './Chat';
 
 
 const Navbar = () => {
@@ -22,12 +23,7 @@ const Navbar = () => {
         }
 
         }catch(err){
-        if (err?.response?.status === 400 || err?.response?.status === 401) {
-          localStorage.removeItem("token");
-          navigate("/");
-          return;
-        }
-        console.log(err);
+          console.log(err);
         }
     }
     useEffect(() => {
@@ -56,7 +52,7 @@ const Navbar = () => {
               <img src={photourl || null} alt="User" onClick={() => setOpen(!open)}/>
             </div>
             <div className="chat-icon">
-              <img src="/chaticon.png" alt="Chat" />
+              <Link to={"/chat"}><img src="/chaticon.png" alt="Chat" /></Link>
             </div>
             {open && (
                 <div className="dropdowns">

@@ -85,5 +85,40 @@ profileRouter.get("/feed", userauth, async (req, res) => {
   }
 });
 
+profileRouter.get("/search", userauth, async (req, res) => {
+  try {
+    const q = req.query.q;
+    const loggedinuserid = new mongoose.Types.ObjectId(req.user);
+    if (!q) {
+      return res.json([]);
+    }
+
+    const connections = await connection.find({
+      status: "accepted",
+      $or: [{ fromuserId: loggedinuserid }, { touserId: loggedinuserid }],
+    });
+
+    const friendIds = connections.map((conn) =>
+      conn.fromuserId.toString() === loggedinuserid.toString()
+        ? conn.touserId
+        : conn.fromuserId,
+    );
+
+    const filtereduser = await User.find({
+      username: { $regex: q, $options: "i" },
+      _id: { $in: friendIds },
+    })
+      .limit(5)
+      .select("username _id");
+
+    if (filtereduser.length === 0) {
+      return res.json([]);
+    }
+
+    return res.json(filtereduser);
+  } catch (err) {
+    return res.status(500).send(err.message);
+  }
+});
 
 module.exports = profileRouter;
