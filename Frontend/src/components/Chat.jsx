@@ -32,6 +32,7 @@ const Chat = () => {
     }
   };
 
+
   useEffect(() => {
     fetchuserid();
   }, []);
@@ -59,6 +60,34 @@ const Chat = () => {
     return () => {
       socket.disconnect();
     };
+  }, [userid, targetuserid]);
+
+  // Fetch existing chat history from server when a chat is opened
+  useEffect(() => {
+    if (!userid || !targetuserid) return;
+
+    const fetchChatHistory = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}chat/${targetuserid}`, {
+          withCredentials: true,
+        });
+        const chat = res.data?.chat;
+        if (chat && Array.isArray(chat.message)) {
+          const mapped = chat.message.map((m) => ({
+            id: m._id || Date.now() + Math.random(),
+            text: m.text,
+            senderId: String(m.senderid),
+          }));
+          setMessages(mapped);
+        } else {
+          setMessages([]);
+        }
+      } catch (err) {
+        console.error("fetchChatHistory error:", err?.response?.data || err.message);
+      }
+    };
+
+    fetchChatHistory();
   }, [userid, targetuserid]);
 
   const sendMessage = () => {

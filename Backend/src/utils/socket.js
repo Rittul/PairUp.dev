@@ -1,5 +1,6 @@
-const socket = require("socket.io")
+const socket = require("socket.io");
 const crypto= require("crypto");
+const Chat=require("../models/chat");
 
 const generateroomid=(userid,targetuserid)=>{
     return crypto.createHash("sha256").update([userid,targetuserid].sort().join("_")).digest("hex");
@@ -19,10 +20,30 @@ const initializesocket=(server)=>{
             socket.join(roomid);
         });
 
-        socket.on("sendMessage",({userid,targetuserid,newMessage})=>{
-            // const roomid=[userid,targetuserid].sort().join("_");
-            const roomid=generateroomid(userid,targetuserid);
-            io.to(roomid).emit("Messagerecived",{newMessage, senderId: userid});
+        socket.on("sendMessage",async ({userid,targetuserid,newMessage})=>{
+            try{
+                // const roomid=[userid,targetuserid].sort().join("_");
+                const roomid=generateroomid(userid,targetuserid);
+                io.to(roomid).emit("Messagerecived",{newMessage, senderId: userid});
+                let chat = await Chat.findOne({
+                    particpants:{$all: [userid,targetuserid]},
+                });
+                if(!chat){
+                    chat= new Chat({
+                        particpants:[userid,targetuserid],
+                        message:[],
+                    });
+                }
+
+                chat.message.push({
+                    senderid:userid,
+                    text:newMessage,
+                })
+                await chat.save();
+
+            }catch(err){
+                console.log(err.message);
+            }
         });
 
         socket.on("disconnect",()=>{});
