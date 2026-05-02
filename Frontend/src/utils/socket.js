@@ -1,5 +1,9 @@
 import io from "socket.io-client";
-import {BASE_URL} from "./constant";
-export const createsocketconnectio=()=>{
-    return io(BASE_URL);
-}
+import { BASE_URL } from "./constant";
+
+export const createsocketconnectio = () => {
+  return io(BASE_URL, {
+    withCredentials: true,
+    transports: ["websocket"],
+  });
+};

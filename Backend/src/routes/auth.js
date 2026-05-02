@@ -25,7 +25,11 @@ authRouter.post("/login",async(req,res)=>{
         }
 
         const token=jwt.sign({userId:user._id},process.env.JWT_SECRET,{expiresIn:"1h",});
-        res.cookie("token",token)
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: true,        
+            sameSite: "None",   
+            });
         return res.json({ message: "login successfull!......", token });
     }catch(err){
         return res.status(500).json({ message: err.message });
