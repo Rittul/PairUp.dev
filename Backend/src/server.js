@@ -12,11 +12,14 @@ initializesocket(server);
 
 app.use(cookieParser());
 app.use(express.json());
-app.use(cors({
-    origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
-  credentials: true
-}));
+// app.use(cors({
+//     origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+//   credentials: true
+// }));
 
+app.use(cors({
+  origin: "*"
+}));
 require('dotenv').config();
 
 const authRouter= require("./routes/auth");
@@ -30,10 +33,11 @@ app.use("/",profileRouter);
 app.use("/",connectionRouter);
 app.use("/",chatRouter);
 
+const PORT = process.env.PORT || 3000;
 
 connectdb().then(()=>{
-    server.listen(3000,(req,res)=>{
-        console.log("Server listening no port 3000 successfully...!");
+    server.listen(PORT,(req,res)=>{
+        console.log(`Server listening no port ${PORT} successfully...!`);
     })
 })
 .catch((err)=>{
