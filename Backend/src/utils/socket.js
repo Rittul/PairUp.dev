@@ -16,7 +16,6 @@ const initializesocket=(server)=>{
         socket.on("joinchat",({userid,targetuserid})=>{
             // const roomid=[userid,targetuserid].sort().join("_");
             const roomid=generateroomid(userid,targetuserid);
-            console.log(roomid);
             socket.join(roomid);
         });
 
@@ -42,7 +41,7 @@ const initializesocket=(server)=>{
                 await chat.save();
 
             }catch(err){
-                console.log(err.message);
+                console.error(err.message);
             }
         });
 

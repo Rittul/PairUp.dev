@@ -109,7 +109,7 @@ profileRouter.get("/search", userauth, async (req, res) => {
       _id: { $in: friendIds },
     })
       .limit(5)
-      .select("username _id");
+      .select("username _id photourl");
 
     if (filtereduser.length === 0) {
       return res.json([]);

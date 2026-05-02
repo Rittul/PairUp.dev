@@ -16,6 +16,18 @@ const Chat = () => {
   const socketRef = useRef(null);
   const [flag, setFlag] = useState(false);
   const [chatuser, setChatuser] = useState("");
+  const [dpurl, setDpurl] = useState("");
+  const [chatfriend, setChatfriend] = useState([]);
+
+
+  const fetchchatuser=async()=>{
+      try{
+        const res=await axios.get(BASE_URL+"getchatfriends",{withCredentials:true});
+        setChatfriend(res.data.chats);
+      }catch(err){
+        console.error(err);
+      }
+  }
 
   const fetchuserid = async () => {
     try {
@@ -28,13 +40,14 @@ const Chat = () => {
     } catch (err) {
       const status = err?.response?.status;
       const message = err?.response?.data || err?.message;
-      console.log(message);
+      console.error(message);
     }
   };
 
 
   useEffect(() => {
     fetchuserid();
+    fetchchatuser();
   }, []);
 
   useEffect(() => {
@@ -53,6 +66,7 @@ const Chat = () => {
           id: Date.now() + Math.random(),
           text: newMessage,
           senderId,
+          isMe: String(senderId) === String(userid),
         },
       ]);
     });
@@ -62,7 +76,6 @@ const Chat = () => {
     };
   }, [userid, targetuserid]);
 
-  // Fetch existing chat history from server when a chat is opened
   useEffect(() => {
     if (!userid || !targetuserid) return;
 
@@ -76,9 +89,16 @@ const Chat = () => {
           const mapped = chat.message.map((m) => ({
             id: m._id || Date.now() + Math.random(),
             text: m.text,
-            senderId: String(m.senderid),
+            senderId:
+              typeof m.senderid === "object"
+                ? String(m.senderid?._id)
+                : String(m.senderid),
           }));
-          setMessages(mapped);
+          const normalizedUserId = String(userid);
+        setMessages(mapped.map(msg => ({
+          ...msg,
+          isMe: msg.senderId === normalizedUserId
+        })));
         } else {
           setMessages([]);
         }
@@ -107,13 +127,14 @@ const Chat = () => {
       });
       setNewmessage("");
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 
-  const handleUserSelect = (selectedUserId,selectedusername) => {
+  const handleUserSelect = (selectedUserId,selectedusername,photourl) => {
     setTargetuserid(selectedUserId);
     setChatuser(selectedusername);
+    setDpurl(photourl);
     setQuery("");
     setResult([]);
     setFlag(true);
@@ -129,7 +150,6 @@ const Chat = () => {
 
     try {
       const res = await axios.get(`${BASE_URL}search?q=${query}`,{withCredentials:true});
-      console.log(res.data);
       setResult(res.data);
     } catch (err) {
       console.error(err);
@@ -145,26 +165,38 @@ const Chat = () => {
       <Navbar />
       <div className="main-chat">
         <div className="left-pannel">
+          
             <div className="srch-box">
                 <input type="text" value={query} onChange={(e)=>setQuery(e.target.value)}/>
             </div>
+            <div className="prev-chat-user">
+            {chatfriend?.map(ch => (
+              <div key={ch.chatId}>
+                <p onClick={()=>handleUserSelect(ch.receiver?._id,ch.receiver?.username,ch.receiver?.photourl)}>{ch.receiver?.username}</p>
+              </div>
+            ))}
+          </div>
             <div className="otpt">
                 <ul>
                     {result.map(r=>(
-                    <li key={r._id} onClick={() => handleUserSelect(r._id,r.username)}>{r.username}</li>
+                    <li key={r._id} onClick={() => handleUserSelect(r._id,r.username,r.photourl)}>{r.username}</li>
                     ))}
                 </ul>
             </div>
         </div>
+
         {flag && <div className="right-pannel">
+            {/* Chat Header — Profile + Name */}
+            <div className="chat-header">
+              <div className="dp"><img src={dpurl || null} alt={chatuser} /></div>
+              <h1 className="cht-user">{chatuser}</h1>
+            </div>
+
             {/* Messages Area */}
-            <h1>{chatuser}</h1>
             <div className="chat-body">
               {messages.map((m) => (
-                <div key={m.id} className="modiji">
-                  <div
-                    className={`message ${m.senderId === userid ? "right" : "left"}`}
-                  >
+                <div key={m.id} className={`modiji ${m.isMe ? "sent" : "received"}`}>
+                  <div className={`message ${m.isMe ? "right" : "left"}`}>
                     {m.text}
                   </div>
                 </div>

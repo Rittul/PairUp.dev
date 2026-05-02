@@ -84,7 +84,6 @@ const Profile = () => {
         { fromuserId: userId },
         { withCredentials: true }
       );
-      console.log(res);
       fetchfriendsdetail();
       fetchpendingrequest();
     } catch (err) {
