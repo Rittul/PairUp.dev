@@ -5,9 +5,9 @@ import { useNavigate } from "react-router-dom";
 import "../CSS/Auth.css";
 const Auth = () => {
   const [flag, setFlag] = useState(true);
-  const [username, setUsername] = useState("modi");
-  const [emailId, setemailId] = useState("modi@gmail.com");
-  const [password, setPassword] = useState("913@Modi");
+  const [username, setUsername] = useState("");
+  const [emailId, setemailId] = useState("");
+  const [password, setPassword] = useState("");
   const [error, seterror] = useState("");
   const navigate = useNavigate();
 
